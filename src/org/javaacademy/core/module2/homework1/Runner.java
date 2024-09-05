@@ -25,9 +25,9 @@ public class Runner {
 
         Zoo<Animal> animals = new Zoo<>(new Tiger(), new Dog(), new Bird());
 
-        animals.getAnimal1();
-        animals.getAnimal2();
-        animals.getAnimal3();
+        ((Tiger) animals.getAnimal1()).roar();
+        ((Dog)animals.getAnimal2()).bark();
+        ((Bird)animals.getAnimal3()).canFly();
     }
 
     public static void ex2() {
