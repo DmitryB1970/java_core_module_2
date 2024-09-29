@@ -1,7 +1,6 @@
 package org.javaacademy.core.module2.homework4.ex1;
 
-import java.util.List;
-import java.util.stream.IntStream;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class Runner {
@@ -24,29 +23,42 @@ public class Runner {
     // k048се178
     // k049се178
 
-    public static final String START_OF_CAR_NUMBER_1 = "а0";
-    public static final String END_OF_CAR_NUMBER_1 = "ан799";
-    public static final String START_OF_CAR_NUMBER_2 = "к0";
-    public static final String END_OF_CAR_NUMBER_2 = "се178";
-    public static final int CAR_QUANTITY = 50;
-    public static final int START_INDEX = 1;
-    public static final int END_INDEX = 3;
+
+    private static final int COUNT_NUMBERS_IN_CAR_NUMBERS = 3;
+    private static final String FIRST_CAR_NUMBER_PATTERN = "а%sан799";
+    private static final String SECOND_CAR_NUMBER_PATTERN = "к%sсе178";
+    private static final int COUNT_CARS = 50;
+    private static final int CAR_NUMBER_STAR_INDEX = 1;
+    private static final int CAR_NUMBER_END_INDEX = 4;
+    private static final int LOWER_INDEX_GOVERNMENT_NUMBER = 40;
+    private static final int UPPER_LIMIT_GOVERNMENT_NUMBER = 49;
+
 
     public static void main(String[] args) {
-        List<Car> cars1 = carsList(START_OF_CAR_NUMBER_1, END_OF_CAR_NUMBER_1);
-        List<Car> cars2 = carsList(START_OF_CAR_NUMBER_2, END_OF_CAR_NUMBER_2);
 
-        Stream.concat(cars1.stream(), cars2.stream())
-                .filter(e -> e.getNumber().substring(START_INDEX, END_INDEX).equals("04"))
-                .forEach(e -> System.out.println(e.getNumber()));
+        Stream<Car> firstCarStream = generateCars(FIRST_CAR_NUMBER_PATTERN, COUNT_CARS);
+        Stream<Car> secondCarStream = generateCars(SECOND_CAR_NUMBER_PATTERN, COUNT_CARS);
+        Stream.concat(firstCarStream, secondCarStream)
+                .filter(car -> isGovernmentEmployeeNumber(car.getNumber()))
+                .map(Car::getNumber)
+                .forEach(System.out::println);
     }
 
-    private static List<Car> carsList(String beginIteration, String endIteration) {
-        List<Car> carList = IntStream.iterate(1, i -> i + 1)
-                .limit(CAR_QUANTITY)
-                .mapToObj(i -> new Car(beginIteration + i + endIteration))
-                .toList();
-        return carList;
+    private static boolean isGovernmentEmployeeNumber(String number) {
+        Integer carNumber = Integer.valueOf(number.substring(CAR_NUMBER_STAR_INDEX, CAR_NUMBER_END_INDEX));
+        return carNumber >= LOWER_INDEX_GOVERNMENT_NUMBER && carNumber <= UPPER_LIMIT_GOVERNMENT_NUMBER;
+    }
+
+    public static Stream<Car> generateCars(String numberPattern, int countCars) {
+
+        AtomicInteger carNumber = new AtomicInteger(0);
+        return Stream.generate(() -> new Car(createNumber(numberPattern, carNumber.addAndGet(1))))
+                .limit(countCars);
+    }
+
+    public static String createNumber(String numberPattern, Integer number) {
+        String textNumber = "0".repeat(COUNT_NUMBERS_IN_CAR_NUMBERS - number.toString().length())
+                .concat(number.toString());
+        return numberPattern.formatted(textNumber);
     }
 }
-

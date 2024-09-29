@@ -10,26 +10,36 @@ package org.javaacademy.core.module2.homework4.ex2;
 //ожидаемый результат:
 //6
 
-
-import java.util.*;
+import java.util.stream.Stream;
 
 public class Runner {
+
+    private static final String LETTER_TO_FIND = "о";
+
     public static void main(String[] args) {
 
-        Set<String> uniqWords = new LinkedHashSet<>(List.of("тон", "тополь", "боль", "рой", "стройка"));
-        System.out.println(uniqWords.stream().filter(e -> e.contains("о")).count());
+        Stream.of("тон", "тополь", "боль", "рой", "стройка")
+                .distinct()
+                .map(String::toLowerCase)
+                .map(word -> countLetterInWord(word, LETTER_TO_FIND))
+                .reduce(Long::sum)
+                .ifPresentOrElse(
+                        System.out::println,
+                        () -> System.out.println(0));
 
 
+        // 2-ой способ
+//          long countLetters = Stream.of("тон", "тополь", "боль", "рой", "стройка")
+//                  .flatMap(word -> Stream.of(word.split("")))
+//                  .filter(wordLetter -> wordLetter.equals(LETTER_TO_FIND))
+//                  .count();
+//        System.out.println(countLetters);
 
+    }
 
-
-
-
-
-
-        }
-
-
-
-
+    private static long countLetterInWord(String word, String letter) {
+        return Stream.of(word.split(""))
+                .filter(wordLetter -> wordLetter.equals(letter))
+                .count();
+    }
 }

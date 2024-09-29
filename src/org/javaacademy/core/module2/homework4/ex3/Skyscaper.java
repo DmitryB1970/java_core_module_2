@@ -1,5 +1,7 @@
 package org.javaacademy.core.module2.homework4.ex3;
 
+import java.util.Objects;
+
 public class Skyscaper {
 
     private String name;
@@ -17,6 +19,19 @@ public class Skyscaper {
         this.name = name;
         this.height = height;
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Skyscaper skyscaper = (Skyscaper) o;
+        return height == skyscaper.height && Objects.equals(name, skyscaper.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, height);
     }
 
     @Override
